@@ -1,14 +1,17 @@
-// Consistencia
+// Consistencia en cálculo numérico
 const value = 10;
 const resultadoFinal = value * 2;
 
-// Adaptabilidad
-const message: string = 10;
+// Adaptabilidad (Remediación: se corrige la asignación de número a tipo string)
+const message: string = '10';
 
-// Responsabilidad
-
+// Responsabilidad única de componentes
 class UserService {
-  getUserData() {}
+  getUserData() {
+    return { id: 1, name: 'Usuario Autorizado' };
+  }
 
-  sendEmail() {}
+  sendEmail() {
+    return true;
+  }
 }
