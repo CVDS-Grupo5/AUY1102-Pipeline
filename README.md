@@ -1,185 +1,179 @@
-# Github NPM Registry
+# Evaluación Parcial N° 2: Desarrollo de Pruebas Unitarias y Análisis de Seguridad II
 
-## About this article
+| Asignatura | Sigla | Ponderación | Semestre | Sede |
+| :--- | :--- | :--- | :--- | :--- |
+| **Ciclo de Vida del Software I** | **AUY1102** | **40%** | **2026-2** | Duoc UC |
 
-GitHub with GitHubActions and GHAS offer an incredible experience for developers around the planet. Just with a few considerations and good ideas we can build a wonderful experience for our development teams, and they just literally "work only on their code"
+---
 
-## Using Github NPM Registry - Local Environment
+## 👥 Datos del Grupo de Trabajo (Grupo 5)
 
-### Authenticating to the NPM Registry
+* **Organización de GitHub:** [https://github.com/CVDS-Grupo5](https://github.com/CVDS-Grupo5)
+* **Repositorio del Proyecto:** [https://github.com/CVDS-Grupo5/AUY1102-Pipeline](https://github.com/CVDS-Grupo5/AUY1102-Pipeline)
+* **Repositorio Base Original:** [https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline](https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline)
 
-1. Setting your [access token](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages#about-scopes-and-permissions-for-package-registries), to enable GitHub functions like an OAuth access token and authenticates the access to the GitHub API.
+### Distribución de Responsabilidades y Roles
 
-    Select the ```read:packages``` scope to download container images and read their metadata.
+| Integrante | Usuario / ID GitHub | Rol Asignado | Responsabilidades Principales |
+| :--- | :--- | :--- | :--- |
+| **Christian Reyes** | `ChRiStIaNo0O` | **Líder QA y Calidad** | • Fork y configuración inicial del repositorio.<br>• Creación del script ejecutor de pruebas unitarias (`scripts/analisis-pruebas.js`).<br>• Obtención de métricas de cobertura y detección de pruebas fallidas.<br>• Integración y configuración de **SonarCloud** (`sonar-project.properties`).<br>• Desarrollo teórico del indicador IE3.1.1. |
+| **Danilo Romero G.** | `DMROMEROG` | **Líder SecOps y Seguridad** | • Integración del repositorio en la consola web de **Snyk**.<br>• Configuración y análisis de vulnerabilidades con **npm audit**.<br>• Verificación de **GitHub Advanced Security** (Secret Scanning y Dependabot).<br>• **Remediación** de código vulnerable y actualización de dependencias (`chokidar`).<br>• Desarrollo teórico del indicador IE3.2.1. |
 
-    Select the ```write:packages``` scope to download and upload container images and read and write their metadata.
+---
 
-    Select the ```delete:packages``` scope to delete container images.
+## 1. Fundamentación Teórica de Calidad y Seguridad
 
-2. To authenticate by adding your personal access token to your ~/.npmrc file, edit the ~/.npmrc file for your project to include the following line, replacing TOKEN with your personal access token. Create a new ~/.npmrc file if one doesn't exist.
+### 1.1 Indicador IE3.1.1: Conceptos Clave de Calidad de Software (por Christian Reyes - `ChRiStIaNo0O`)
 
-    ```
-    //npm.pkg.github.com/:_authToken=TOKEN
-    ```
-3. To authenticate by logging in to npm, use the ```npm login``` command, replacing USERNAME with your GitHub username, TOKEN with your personal access token, and PUBLIC-EMAIL-ADDRESS with your email address.
+El aseguramiento de la calidad del software (QA) abarca múltiples técnicas que garantizan que el producto cumpla los requerimientos funcionales y técnicos con la menor deuda técnica posible:
 
-If GitHub Packages is not your default package registry for using npm and you want to use the ```npm audit``` command, we recommend you use the ```--scope``` flag with the owner of the package when you authenticate to GitHub Packages.
+* **Pruebas Unitarias (Unit Testing):** Verificación aislada del comportamiento de las unidades mínimas de código (funciones, clases, métodos). Garantizan que ante entradas conocidas se obtengan salidas predecibles, aislando dependencias mediante simulaciones (*mocks* o *stubs*).
+* **Calidad de Código Estático vs. Dinámico:**
+  * *Estático (SAST / Linters):* Se analiza el código fuente sin ejecutarlo. Permite detectar errores de sintaxis, incumplimiento de estándares, malas prácticas de tipado y fallas de seguridad tempranas.
+  * *Dinámico (DAST / Testing en ejecución):* Se evalúa la aplicación en tiempo de ejecución para analizar rendimiento, manejo de memoria y respuesta ante datos imprevistos.
+* **Análisis de Seguridad y Vulnerabilidades:** Identificación de patrones inseguros (como inyecciones SQL o Cross-Site Scripting) y detección de componentes obsoletos con fallos conocidos (SCA - *Software Composition Analysis*).
+* **Pruebas Integradas (Integration Testing):** Validan la correcta interoperabilidad y comunicación entre diferentes módulos, componentes y servicios externos (APIs, bases de datos).
+* **Pruebas de Estrés (Stress Testing):** Someten al sistema a cargas extremas por encima de los límites normales operativos para evaluar su estabilidad, umbrales de fallo y comportamiento bajo degradación controlada.
+* **Pruebas de Regresión (Regression Testing):** Re-ejecución de baterías de pruebas existentes cada vez que se introduce un cambio, refactorización o corrección, garantizando que nuevas modificaciones no rompan funcionalidades preexistentes.
 
-```
-  $ npm login --scope=@OWNER --registry=https://npm.pkg.github.com
-  > Username: USERNAME
-  > Password: TOKEN
-  > Email: PUBLIC-EMAIL-ADDRESS
-```
+---
 
-### Pushing packages
+### 1.2 Indicador IE3.2.1: Métodos y Herramientas en el Ciclo de Vida del Software (por Danilo Romero G. - `DMROMEROG`)
 
-#### Publishing a package using a local .npmrc file
+La adopción de herramientas automatizadas dentro del ciclo de vida del desarrollo de software (SDLC) impulsa el principio de **Shift-Left Testing & Security**, el cual traslada la detección de defectos hacia las etapas más tempranas del desarrollo:
 
-You can use an .npmrc file to configure the scope mapping for your project. In the .npmrc file, use the GitHub Packages URL and account owner so GitHub Packages knows where to route package requests. Using an .npmrc file prevents other developers from accidentally publishing the package to npmjs.org instead of GitHub Packages.
+* **SonarCloud:** Plataforma SaaS líder para la inspección continua de código estático (SAST). Evalúa la calidad global a través del *Quality Gate*, clasificando los hallazgos en *Bugs* (fallos de fiabilidad), *Vulnerabilities* (seguridad), *Security Hotspots* (código sensible que requiere revisión) y *Code Smells* (mantenibilidad y deuda técnica).
+* **Snyk:** Solución integral de seguridad orientada a desarrolladores. Permite analizar el árbol completo de dependencias directas e indirectas (SCA), alertando sobre CVEs conocidos con su correspondiente calificación de severidad (*Critical, High, Medium, Low*) y proveyendo recomendaciones automatizadas de remediación.
+* **npm audit:** Utilidad nativa de Node.js que compara el árbol de dependencias instalado en `package-lock.json` contra la base de datos de avisos de seguridad de npm (GitHub Advisory Database), permitiendo auditorías rápidas en la terminal y en pipelines CI/CD.
+* **GitHub Advanced Security (GHAS):** Suite de seguridad nativa de GitHub que incluye *Secret Scanning* (detección de tokens o credenciales expuestas en commits) y alertas de *Dependabot* con actualizaciones de seguridad automáticas (*Automated Security Updates*).
+* **Impacto en la Mejora Continua:** Corregir un error en la etapa de desarrollo local o revisión de Pull Request resulta entre 10 y 30 veces más económico y seguro que detectarlo en producción, garantizando entregas continuas estables.
 
-1. Authenticate to GitHub Packages. For more information, see "[Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)."
-2. In the same directory as your ```package.json``` file, create or edit an ```.npmrc``` file to include a line specifying GitHub Packages URL and the account owner. Replace ```OWNER``` with the name of the user or organization account that owns the repository containing your project.
+---
 
-    ```
-    @OWNER:registry=https://npm.pkg.github.com
-    ```
+## 2. Parte 1: Análisis de Código mediante Pruebas Unitarias
 
-3. Add the .npmrc file to the repository where GitHub Packages can find your project. For more information, see "[Adding a file to a repository](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)."
+> **Responsable:** Christian Reyes (`ChRiStIaNo0O`)
 
-    **NOTE**: Include on [```.gitignore```](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files) the exclusion of .npmrc to not compromise security.
+### 2.1 Creación del Fork y Repositorio del Grupo
+Se realizó el Fork del repositorio oficial [`AUY1102-Pipeline`](https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline) hacia la organización del grupo:
+* **URL del Fork:** `https://github.com/CVDS-Grupo5/AUY1102-Pipeline`
+* **Visibilidad:** Pública (habilita las características de SonarCloud y GitHub Advanced Security de forma gratuita).
 
-4. Verify the name of your package in your project's package.json. The name field must contain the scope and the ```name``` of the package. For example, if your package is called "test", and you are publishing to the "My-org" GitHub organization, the ```name``` field in your package.json should be ```@my-org/test```.
+### 2.2 Creación del Script de Ejecución y Reporte
+Se implementó el script automatizado en Node.js [`scripts/analisis-pruebas.js`](./scripts/analisis-pruebas.js) y el comando directo en `package.json`:
 
-5. Verify the repository field in your project's package.json. The ```repository``` field must match the URL for your GitHub ```repository```. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```.
-
-6. Publish the package:
-
-    ```
-    $ npm publish
-    ```
-
-#### Publishing a package using publishConfig in the package.json file
-
-You can use ```publishConfig``` element in the package.json file to specify the registry where you want the package published. For more information, see "[publishConfig](https://docs.npmjs.com/files/package.json#publishconfig)" in the npm documentation.
-
-1. Edit the package.json file for your package and include a ```publishConfig``` entry.
-
-```
-"publishConfig": {
-  "registry":"https://npm.pkg.github.com"
-},
+```bash
+npm run test:analisis
 ```
 
-2. Verify the ```repository``` field in your project's package.json. The ```repository``` field must match the URL for your GitHub repository. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```
+### 2.3 Evidencias Visuales de la Parte 1
 
-3. Publish the package:
+#### 📸 Captura 1: Ejecución del Script de Pruebas Unitarias en Consola
+Muestra la ejecución completa bajo el entorno de **Christian Reyes (`ChRiStIaNo0O`)**, validando las 10 suites de prueba y las 18 pruebas unitarias:
 
-      ```
-      $ npm publish
-      ```
-To discover every way to working with [NPM Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) please generete and **ISSUE**.
+![Captura 1 - Ejecución de Pruebas Unitarias](evidencia/parte1/E1_01_ejecucion_pruebas_unitarias.png)
 
-<br>
+#### 📸 Captura 2: Porcentaje de Cobertura y Detalle de Líneas No Cubiertas
+Muestra la tabla de porcentajes de cobertura global (**Líneas: 43.28%**, **Sentencias: 43.28%**, **Funciones: 56.66%**, **Ramas: 60%**) y el desglose de los componentes sin cobertura de tests (`date-value-object.ts`, módulos de `src/quality/` e `index.ts`):
 
-## Using Github Container Registry - Github Action
-<br>
+![Captura 2 - Cobertura de Código y Líneas No Cubiertas](evidencia/parte1/E1_02_cobertura_y_partes_no_cubiertas.png)
 
+* **Registro de salida en texto plano:** [`evidencia/parte1/E1_01_ejecucion_script_pruebas_ChRiStIaNo0O.txt`](./evidencia/parte1/E1_01_ejecucion_script_pruebas_ChRiStIaNo0O.txt)
+* **Commit firmado:** `[ChRiStIaNo0O] feat(pruebas): creacion de script de analisis de pruebas unitarias y reporte de cobertura` (Hash: `6245a26`).
+
+---
+
+## 3. Parte 2: Análisis de Seguridad de Código Estático
+
+> **Responsable:** Danilo Romero G. (`DMROMEROG`)
+
+### 3.1 Auditoría de Dependencias con `npm audit`
+Ejecución del análisis de vulnerabilidades en dependencias mediante la herramienta `npm audit`:
+* Se detectaron inicialmente **82 vulnerabilidades** (2 Críticas, 49 Altas, 20 Moderadas, 11 Bajas).
+
+#### 📸 Captura 3: Reporte de `npm audit` en Consola
+Ejecución en consola bajo el usuario de **Danilo Romero G. (`DMROMEROG`)**:
+
+![Captura 3 - npm audit en Consola](evidencia/parte2/E2_01_npm_audit_consola.png)
+
+* **Registro completo en texto:** [`evidencia/parte2/E2_02_npm_audit_consola_DMROMEROG.txt`](./evidencia/parte2/E2_02_npm_audit_consola_DMROMEROG.txt)
+
+---
+
+### 3.2 Integración y Análisis con SonarCloud
+Se configuró el archivo de propiedades [`sonar-project.properties`](./sonar-project.properties) y se conectó el repositorio `CVDS-Grupo5_AUY1102-Pipeline` a la plataforma SonarCloud.
+
+#### 📸 Captura 4: Dashboard de SonarCloud
+Visualización del Quality Gate con estado **PASSED**, métricas de confiabilidad (A), vulnerabilidades detectadas (2) y cobertura integrada desde Jest:
+
+![Captura 4 - Dashboard SonarCloud](evidencia/parte2/E2_02_sonarcloud_dashboard.png)
+
+---
+
+### 3.3 Integración y Escaneo con Snyk
+Se importó el proyecto a la consola web de **Snyk**, analizando tanto dependencias (`package.json`) como código fuente:
+
+#### 📸 Captura 5: Consola de Gestión de Vulnerabilidades en Snyk
+Vista del escáner en Snyk con la sesión activa de **Danilo Romero G. (`DMROMEROG`)**, mostrando vulnerabilidades por severidad y sugerencias de remediación:
+
+![Captura 5 - Snyk Dashboard](evidencia/parte2/E2_03_snyk_dashboard_vulnerabilidades.png)
+
+---
+
+### 3.4 GitHub Advanced Security (GHAS)
+Activación de herramientas nativas de seguridad en el repositorio de GitHub:
+1. **Secret Scanning:** Protección activa contra tokens y credenciales expuestas.
+2. **Dependabot Alerts:** Notificación y gestión de alertas de seguridad directas e indirectas.
+
+#### 📸 Captura 6: Pestaña Security y Dependabot en GitHub
+Visualización del repositorio en GitHub con 66 alertas rastreadas y Secret Scanning habilitado:
+
+![Captura 6 - GitHub Advanced Security](evidencia/parte2/E2_04_github_advanced_security_secret_scanning.png)
+
+---
+
+### 3.5 Remediaciones Aplicadas
+
+Se aplicaron remediaciones concretas en el código y en las dependencias para subsanar los hallazgos de seguridad:
+
+1. **Remediación en `src/quality/errores-object.ts`:**
+   * Se corrigió el error de tipado TypeScript (`const message: string = 10;` ➔ `const message: string = '10';`).
+2. **Remediación en `src/quality/insecure-2-object.ts`:**
+   * Se reemplazó la consulta concatenada vulnerable a SQL Injection por una consulta parametrizada (`WHERE username = ?`).
+   * Se sanitizó la salida de datos para mitigar Cross-Site Scripting (XSS).
+   * Se eliminaron contraseñas y claves en texto plano, reemplazándolas por variables de entorno (`process.env`).
+3. **Remediación en `credentials.yml`:**
+   * Se eliminó el Personal Access Token hardcodeado (`token: ${GITHUB_TOKEN}`).
+4. **Remediación en `package.json` (Dependencias):**
+   * Se actualizó `chokidar` de la versión obsoleta `^2.0.3` a `^3.6.0`, removiendo **129 dependencias vulnerables** del árbol de node_modules.
+
+#### 📸 Captura 7: Diff de la Remediación en Git
+Detalle de las líneas corregidas en el commit firmado por **Danilo Romero G. (`DMROMEROG`)**:
+
+![Captura 7 - Remediación Git Diff](evidencia/parte2/E2_05_remediacion_codigo_diff.png)
+
+* **Commit firmado:** `[DMROMEROG] fix(seguridad): remediacion de vulnerabilidades en codigo y actualizacion de dependencias segun analisis SAST` (Hash: `df6a8fc`).
+
+---
+
+## 4. Trazabilidad del Historial de Commits
+
+Todos los commits fueron realizados en español y contienen en su mensaje el identificador de cada estudiante:
+
+```bash
+git log --oneline
 ```
-name: Create and publish NPM Package
-on:
-  release:
-    types: [published]
 
-jobs:
-  Publish-NPM-Package:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache-dependency-path: package-lock.json
-          registry-url: https://npm.pkg.github.com
-      - run: npm install
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.PAT_GITHUB_TOKEN}}
-```
-```
-name: NPM Audit
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
-
-jobs:
-  npm-audit:
-    name: npm audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: install dependencies
-        run: npm ci
-      - uses: oke-py/npm-audit-action@v2
-        with:
-          audit_level: moderate
-          github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
-          issue_assignees: oke-py
-          issue_labels: vulnerability,test
-          dedupe_issues: true
+```text
+84938a5 [ChRiStIaNo0O] docs: incorporacion de informe completo de evaluacion 2 en formato markdown
+df6a8fc [DMROMEROG] fix(seguridad): remediacion de vulnerabilidades en codigo y actualizacion de dependencias segun analisis SAST
+6245a26 [ChRiStIaNo0O] feat(pruebas): creacion de script de analisis de pruebas unitarias y reporte de cobertura
 ```
 
-To enable more capabilities and demostrate the strongest of Github and Github Actions we complement this example with [Github Reusable Workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) using Open Source Tools and Enterprise Tools on Actions.
+---
 
-Reusing workflows avoids duplication. This makes workflows easier to maintain and allows you to create new workflows more quickly by building on the work of others, just as you do with actions. Workflow reuse also promotes best practice by helping you to use workflows that are well designed, have already been tested, and have been proved to be effective. Your organization can build up a library of reusable workflows that can be centrally maintained.
+## 5. Conclusiones
 
-**Note:** To enable your actions, in some cases you must configurate [encrypted secrets](https://docs.github.com/en/enterprise-cloud@latest/actions/security-guides/encrypted-secrets)
-
-<br>
-
-```
-name: Github Reusable Workflow
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
-  release:
-    types: [published]
-
-jobs:
-  NPM-Audit:
-    if: github.event_name != 'opened'
-    uses: ./.github/workflows/npm-audit.yml
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-  
-  NPM-Publish:
-    if: ${{ (github.event.release.action == 'released') && always() }}
-    uses: ./.github/workflows/npm-registry.yml
-    needs: [NPM-Audit]
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-```
-<br>
-
-## License
-
-The scripts and documentation in this project are released under the [MIT License](./LICENSE)
-## Contributions
-
-Contributions are welcome! read our [Contributor's Guide](./docs/CONTRIBUTING.md)
-
-## Code of Conduct
-
-👋 Be nice. See our [code of conduct](./docs/code_of_conduct.md)
-
-## References
-
-+ **NPM Publish:** https://github.com/actions/setup-node
-+ **NPM Audit Signatures:** https://github.blog/changelog/2022-07-26-a-new-npm-audit-signatures-command-to-verify-npm-package-integrity/
-+ **NPM Audit:** https://github.com/marketplace/actions/npm-audit-action
+1. **Impacto de las Pruebas Unitarias:** La automatización de pruebas con Jest y el cálculo de cobertura con Istanbul permiten identificar con exactitud componentes desprotegidos (como `date-value-object.ts` con apenas 6.66% de cobertura), guiando el esfuerzo del equipo hacia la reducción efectiva de la deuda técnica.
+2. **Estrategia DevSecOps (Shift-Left):** La combinación de herramientas SAST (SonarCloud), SCA (Snyk, `npm audit`) y análisis nativo en el repositorio (GitHub Advanced Security) permite detectar y remediar fallas en las fases iniciales del ciclo de vida del software, reduciendo drásticamente el costo y riesgo de remediación respecto a producción.
+3. **Colaboración y Gobernanza:** El trabajo colaborativo mediante control de versiones en GitHub, con trazabilidad mediante identificadores de commit y división de roles (QA vs. SecOps), garantiza transparencia y rigor metodológico en la entrega continua de software.
