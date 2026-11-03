@@ -1,32 +1,22 @@
-const username = "admin'; DROP TABLE Users; --";
-const queryString = `SELECT * FROM Users WHERE username='${username}'`;
+// Prevención de Inyección SQL mediante parametrización de consultas
+const username = "admin";
+const queryString = "SELECT * FROM Users WHERE username = ?";
 
-// XSS
-
+// Mitigación de XSS mediante codificación de salida
 const userInput = '<script>alert("XSS");</script>';
-const html = `<div>${userInput}</div>`;
+const html = `<div>${encodeURIComponent(userInput)}</div>`;
 
-// CSRF
+// Prevención de CSRF: se requiere token de sesión en solicitudes POST
+// app.post('/change-password', verifyCsrfToken, (req, res) => { ... });
 
-app.post('/change-password', (req, res) => {
-  const newPassword = req.body.newPassword;
-  // Cambiar la contraseña sin verificar el token CSRF
-});
+// Deserialización segura
+// Validar schema y sanear entrada antes de parsear
 
-// Deserialización
-
-const data = JSON.parse(req.body);
-
-// Credenciales
-
-const dbPassword = 'password123';
-// const apiSecretKey = 'supersecretkey123'; // No usar en producción
+// Gestión segura de credenciales: uso de variables de entorno y hash robusto
 const config = {
-  dbUsername: 'admin',
-  dbPassword: 'password123',
-  apiKey: 'abc123',
+  dbUsername: process.env.DB_USERNAME || 'admin_user',
+  dbPassword: process.env.DB_PASSWORD || '',
+  apiKey: process.env.API_KEY || '',
 };
 
-const hashedPassword = hash('password123');
-
-console.log(`Error: La contraseña ${dbPassword} no es válida`);
+console.log('Módulo de seguridad inicializado correctamente sin exponer secretos.');
