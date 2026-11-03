@@ -1,0 +1,35 @@
+
+Testing C:\Users\DMROMEROG\AUY1102-Pipeline...
+
+Tested 40 dependencies for known issues, found 4 issues, 6 vulnerable paths.
+
+
+Issues to fix by upgrading:
+
+  Upgrade chokidar@3.6.0 to chokidar@4.0.0 to fix
+  [-]  Uncontrolled Recursion [High Severity][https://security.snyk.io/vuln/SNYK-JS-BRACES-19963945] in braces@3.0.3
+    introduced by chokidar@3.6.0 > braces@3.0.3
+
+
+Issues with no direct upgrade or patch:
+  [-]  Regular Expression Denial of Service (ReDoS) [High Severity][https://security.snyk.io/vuln/SNYK-JS-PICOMATCH-15765511] in picomatch@2.3.1
+    introduced by chokidar@3.6.0 > anymatch@3.1.2 > picomatch@2.3.1 and 1 other path(s)
+  This issue was fixed in versions: 2.3.2, 3.0.2, 4.0.4
+  [-]  Prototype Pollution [Medium Severity][https://security.snyk.io/vuln/SNYK-JS-PICOMATCH-15765513] in picomatch@2.3.1
+    introduced by chokidar@3.6.0 > anymatch@3.1.2 > picomatch@2.3.1 and 1 other path(s)
+  This issue was fixed in versions: 2.3.2, 3.0.2, 4.0.4
+  [-]  Uncontrolled Recursion [Medium Severity][https://security.snyk.io/vuln/SNYK-JS-YAML-15765520] in yaml@1.10.2
+    introduced by cosmiconfig@6.0.0 > yaml@1.10.2
+  This issue was fixed in versions: 1.10.3, 2.8.3
+
+
+
+Organization:      dmromerog
+Package manager:   npm
+Target file:       package-lock.json
+Project name:      @Fundacion-Instituto-Profesional-Duoc-UC/auy1102-pipeline
+Open source:       no
+Project path:      C:\Users\DMROMEROG\AUY1102-Pipeline
+Licenses:          enabled
+
+
