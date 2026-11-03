@@ -166,7 +166,33 @@ El script ejecuta Jest configurado con el motor de instrumentación de cobertura
 
 ---
 
-### 4.2 Matriz de Remediaciones Implementadas
+### 4.2 Integración y Resultados Oficiales en SonarCloud
+* **Organización SonarCloud:** [`cvds-grupo5`](https://sonarcloud.io/organizations/cvds-grupo5/projects)
+* **Clave del Proyecto:** `CVDS-Grupo5_AUY1102-Pipeline`
+* **Enlace al Dashboard en Vivo:** [https://sonarcloud.io/project/overview?id=CVDS-Grupo5_AUY1102-Pipeline](https://sonarcloud.io/project/overview?id=CVDS-Grupo5_AUY1102-Pipeline)
+* **Enlace a Issues Detectados:** [https://sonarcloud.io/project/issues?id=CVDS-Grupo5_AUY1102-Pipeline](https://sonarcloud.io/project/issues?id=CVDS-Grupo5_AUY1102-Pipeline)
+
+#### Métricas Reales Extraídas Oficialmente desde SonarCloud API
+
+| Métrica / Dimensión | Resultado Oficial | Umbral Quality Gate | Estado |
+| :--- | :---: | :---: | :---: |
+| **Quality Gate Global** | **PASSED (OK)** | Condición Clean as You Code | ✅ **APROBADO** |
+| **Confiabilidad (Reliability / Bugs)** | **0 Bugs** | Rating A | ✅ Aprobado |
+| **Seguridad (Security Rating)** | **Rating A** | Rating A | ✅ Aprobado |
+| **Mantenibilidad (Code Smells)** | **2 Code Smells** | Rating A | ✅ Aprobado |
+| **Revisión de Security Hotspots** | **100.0% Revisados** | 100% | ✅ Aprobado |
+| **Líneas de Código Analizadas (NCLOC)** | **834 líneas** | - | Analizado |
+| **Última Revisión Sincronizada** | Commit `76037a0` | Rama `master` | Sincronizado |
+
+#### Principales Hallazgos y Reglas de Calidad / Seguridad Detectadas:
+1. `javascript:S4036` (Minor): Verificación de variable de entorno PATH en procesos hijos (`scripts/analisis-pruebas.js`).
+2. `javascript:S7773` (Minor): Preferencia de uso de `Number.parseInt` sobre función global `parseInt`.
+3. `githubactions:S8543` (Major): Uso de dependencias en workflows de GitHub Actions sin versión exacta bloqueada (*pinned SHA*).
+4. `githubactions:S6505` (Major): Recomendación de omitir `--ignore-scripts` para evitar scripts maliciosos de ciclo de vida durante `npm install`.
+
+---
+
+### 4.3 Matriz de Remediaciones Implementadas
 
 Para dar cumplimiento estricto al requerimiento de remediación en código y dependencias, se aplicaron las siguientes soluciones técnicas:
 
