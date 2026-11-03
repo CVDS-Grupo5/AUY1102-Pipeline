@@ -73,22 +73,34 @@ flowchart TD
 El aseguramiento de la calidad del software (SQA) no es una actividad aislada al final del proyecto, sino un conjunto estructurado de procesos continuos:
 
 ```mermaid
-flowchart LR
-    subgraph ESTATIC["Calidad Estática (Sin Ejecución)"]
-        E1["Linters (ESLint)"]
-        E2["Tipado Estático (TypeScript)"]
-        E3["Inspección SAST (SonarCloud)"]
+flowchart TD
+    subgraph ETAPA1["1. Aseguramiento Estático (Sin Ejecutar Código)"]
+        A1["Código Fuente TypeScript (src/)"] --> A2["Tipado Estático: Detecta inconsistencias de tipos"]
+        A2 --> A3["ESLint: Valida estándares y buenas prácticas"]
+        A3 --> A4["SonarCloud (SAST): Inspecciona vulnerabilidades y Code Smells"]
     end
 
-    subgraph DINAMIC["Calidad Dinámica (En Ejecución)"]
-        D1["Pruebas Unitarias (Jest)"]
-        D2["Pruebas de Integración"]
-        D3["Pruebas de Estrés y Carga"]
-        D4["Pruebas de Regresión"]
+    subgraph ETAPA2["2. Aseguramiento Dinámico (En Tiempo de Ejecución)"]
+        A4 --> B1["Pruebas Unitarias (Jest): Valida lógica de Value Objects aislados"]
+        B1 --> B2["Cálculo de Cobertura (Istanbul): Mide líneas y ramas evaluadas"]
+        B2 --> B3["Pruebas de Regresión: Garantiza que parches no rompan funciones previas"]
     end
 
-    ESTATIC --> RESULT["Software Seguro, Confiable y Mantenible"]
-    DINAMIC --> RESULT
+    subgraph ETAPA3["3. Seguridad de Dependencias (SCA)"]
+        B3 --> C1["npm audit / Snyk: Escaneo de vulnerabilidades en librerías de terceros"]
+    end
+
+    C1 --> FINAL["✅ Producto Final Certificado (Integration Solutions):\nAlta Confiabilidad, Cero Deuda Técnica y Seguridad Blindada"]
+
+    classDef estatico fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px;
+    classDef dinamico fill:#e0f2f1,stroke:#00897b,stroke-width:2px;
+    classDef seguridad fill:#fff3e0,stroke:#fb8c00,stroke-width:2px;
+    classDef fin fill:#e8f8f5,stroke:#2e7d32,stroke-width:3px;
+
+    class A1,A2,A3,A4 estatico;
+    class B1,B2,B3 dinamico;
+    class C1 seguridad;
+    class FINAL fin;
 ```
 
 * **Pruebas Unitarias (Unit Testing):** Verifican el comportamiento aislado de las unidades lógicas elementales (funciones, métodos, clases). En este proyecto se auditaron primitivas de dominio (*Value Objects* como `StringValueObject`, `NumberValueObject` y `EnumValueObject`), asegurando consistencia en la lógica empresarial sin acoplamiento a bases de datos ni servicios externos.
