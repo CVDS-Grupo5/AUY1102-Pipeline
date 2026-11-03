@@ -54,13 +54,6 @@ flowchart TD
         K --> B
         I -- "Limpio / Mitigado" --> L["Quality Gate Aprobado / Release Listo"]
     end
-
-    classDef process fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef success fill:#e8f8f5,stroke:#27ae60,stroke-width:2px;
-    class B,E,F,G,H,J,K process;
-    class C,I decision;
-    class L success;
 ```
 
 ---
@@ -90,17 +83,7 @@ flowchart TD
         B3 --> C1["npm audit / Snyk: Escaneo de vulnerabilidades en librerías de terceros"]
     end
 
-    C1 --> FINAL["✅ Producto Final Certificado (Integration Solutions):\nAlta Confiabilidad, Cero Deuda Técnica y Seguridad Blindada"]
-
-    classDef estatico fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px;
-    classDef dinamico fill:#e0f2f1,stroke:#00897b,stroke-width:2px;
-    classDef seguridad fill:#fff3e0,stroke:#fb8c00,stroke-width:2px;
-    classDef fin fill:#e8f8f5,stroke:#2e7d32,stroke-width:3px;
-
-    class A1,A2,A3,A4 estatico;
-    class B1,B2,B3 dinamico;
-    class C1 seguridad;
-    class FINAL fin;
+    C1 --> FINAL["Software Seguro, Confiable y Mantenible (Integration Solutions)"]
 ```
 
 * **Pruebas Unitarias (Unit Testing):** Verifican el comportamiento aislado de las unidades lógicas elementales (funciones, métodos, clases). En este proyecto se auditaron primitivas de dominio (*Value Objects* como `StringValueObject`, `NumberValueObject` y `EnumValueObject`), asegurando consistencia en la lógica empresarial sin acoplamiento a bases de datos ni servicios externos.
@@ -204,7 +187,26 @@ El script ejecuta Jest configurado con el motor de instrumentación de cobertura
 
 ---
 
-### 4.3 Matriz de Remediaciones Implementadas
+### 4.3 Integración y Resultados Oficiales en Snyk (Danilo Romero G. - `DMROMEROG`)
+* **Organización Snyk Oficial:** `dmromerog`
+* **Proyecto en Snyk:** `@Fundacion-Instituto-Profesional-Duoc-UC/auy1102-pipeline` (`package-lock.json`)
+* **Autenticación:** Token de cuenta validado exitosamente (`Your account has been authenticated`).
+* **Tipo de Análisis:** Snyk Open Source (SCA - Software Composition Analysis).
+
+#### Métricas Reales Extraídas Oficialmente desde Snyk CLI
+
+| Parámetro Snyk | Resultado Oficial |
+| :--- | :--- |
+| **Dependencias Evaluadas** | **40 dependencias analizadas** |
+| **Total de Problemas (Issues)** | **5 vulnerabilidades detectadas** en 8 rutas vulnerables |
+| **Vulnerabilidades de Severidad Alta** | **3 Issues** (`SNYK-JS-BRACES-19963945`, `SNYK-JS-PICOMATCH-21248802`, `SNYK-JS-PICOMATCH-15765511`) |
+| **Vulnerabilidades de Severidad Media** | **2 Issues** (`SNYK-JS-PICOMATCH-15765513`, `SNYK-JS-YAML-15765520`) |
+| **Remediación Automatizada de Snyk** | Actualizar `chokidar@3.6.0` a `chokidar@4.0.0` y `yaml` a `1.10.3 / 2.8.3` |
+| **Evidencia en Texto Plano** | [`evidencia/parte2/E2_03_snyk_test_consola_DMROMEROG.txt`](./evidencia/parte2/E2_03_snyk_test_consola_DMROMEROG.txt) |
+
+---
+
+### 4.4 Matriz de Remediaciones Implementadas
 
 Para dar cumplimiento estricto al requerimiento de remediación en código y dependencias, se aplicaron las siguientes soluciones técnicas:
 
