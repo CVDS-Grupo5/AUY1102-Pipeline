@@ -1,5 +1,5 @@
 # INFORME TÉCNICO Y EJECUTIVO DE EVALUACIÓN PARCIAL N° 2
-## Aseguramiento de Calidad de Software, Pruebas Unitarias y Análisis de Seguridad Estático (DevSecOps)
+## Aseguramiento de Calidad de Software, Pruebas Unitarias y Análisis de Seguridad Estático
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CVDS-Grupo5_AUY1102-Pipeline&metric=alert_status)](https://sonarcloud.io/dashboard?id=CVDS-Grupo5_AUY1102-Pipeline)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=CVDS-Grupo5_AUY1102-Pipeline&metric=security_rating)](https://sonarcloud.io/dashboard?id=CVDS-Grupo5_AUY1102-Pipeline)
@@ -19,15 +19,6 @@
 | **Organización GitHub** | [https://github.com/CVDS-Grupo5](https://github.com/CVDS-Grupo5) |
 | **Repositorio del Proyecto** | [https://github.com/CVDS-Grupo5/AUY1102-Pipeline](https://github.com/CVDS-Grupo5/AUY1102-Pipeline) |
 | **Repositorio Base Original** | [https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline](https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline) |
-
----
-
-### 👥 Cuadro de Integrantes y Distribución de Responsabilidades
-
-| Integrante | ID / Usuario GitHub | Rol Operativo | Responsabilidades Asignadas |
-| :--- | :--- | :--- | :--- |
-| **Christian Reyes** | `ChRiStIaNo0O` | **Líder QA y Calidad** | • Creación del fork del proyecto y configuración del entorno.<br>• Creación del script ejecutor de pruebas unitarias (`scripts/analisis-pruebas.js`).<br>• Cálculo y auditoría de porcentajes de cobertura de código.<br>• Identificación y diagnóstico de pruebas fallidas y módulos sin cobertura.<br>• Configuración técnica para **SonarCloud** (`sonar-project.properties`).<br>• Desarrollo del marco conceptual de calidad (Indicador **IE3.1.1**). |
-| **Danilo Romero G.** | `DMROMEROG` | **Líder SecOps y Seguridad** | • Integración del repositorio en la plataforma **Snyk** (SCA / SAST).<br>• Ejecución y análisis de vulnerabilidades mediante **npm audit**.<br>• Habilitación y monitoreo de **GitHub Advanced Security** (Secret Scanning y Dependabot).<br>• **Remediación** integral de código vulnerable y actualización de dependencias (`chokidar`).<br>• Desarrollo del marco metodológico de herramientas de ciclo de vida (Indicador **IE3.2.1**). |
 
 ---
 
